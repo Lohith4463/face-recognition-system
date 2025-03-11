@@ -1,0 +1,2 @@
+*.large-file-extension filter=lfs diff=lfs merge=lfs -text
+backend/shape_predictor_68_face_landmarks.dat filter=lfs diff=lfs merge=lfs -text
