@@ -1,26 +1,54 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import "./MainPage.css"; // Import CSS for animations
 
 const MainPage = () => {
+  const [buttonActive, setButtonActive] = useState(null); // Track active button
   const navigate = useNavigate();
 
   const handleEmployeeLogin = () => {
+    setButtonActive("employee");
     navigate("/login");
+    setTimeout(() => setButtonActive(null), 300);
   };
 
-  const handleBack = () => navigate(-1);
+  const handleAdminLogin = () => {
+    setButtonActive("admin");
+    navigate("/admin");
+    setTimeout(() => setButtonActive(null), 300);
+  };
+
+  const handleBack = () => {
+    setButtonActive("back");
+    navigate(-1);
+    setTimeout(() => setButtonActive(null), 300);
+  };
+
+  // Card entrance animation trigger
+  useEffect(() => {
+    const card = document.querySelector(".dynamic-card");
+    if (card) {
+      card.classList.add("animate-in");
+    }
+  }, []);
 
   return (
     <div style={styles.container}>
       <header style={styles.header}>
         <h1 style={styles.headerTitle}>Welcome to the Face Recognition System</h1>
-        <button onClick={handleBack} style={styles.backButton}>
+        <button
+          onClick={handleBack}
+          style={{
+            ...styles.backButton,
+            ...(buttonActive === "back" ? styles.buttonActive : {}),
+          }}
+        >
           Back
         </button>
       </header>
 
       <main style={styles.main}>
-        <div style={styles.card}>
+        <div style={styles.card} className="dynamic-card">
           <div style={styles.cardContent}>
             <img
               src="/logo2.png"
@@ -28,10 +56,22 @@ const MainPage = () => {
               style={styles.cardLogo}
             />
             <div style={styles.buttonWrapper}>
-              <button onClick={() => navigate("/admin")} style={styles.button}>
+              <button
+                onClick={handleAdminLogin}
+                style={{
+                  ...styles.button,
+                  ...(buttonActive === "admin" ? styles.buttonActive : {}),
+                }}
+              >
                 Admin Registration
               </button>
-              <button onClick={handleEmployeeLogin} style={styles.button}>
+              <button
+                onClick={handleEmployeeLogin}
+                style={{
+                  ...styles.button,
+                  ...(buttonActive === "employee" ? styles.buttonActive : {}),
+                }}
+              >
                 Employee Login
               </button>
             </div>
@@ -49,7 +89,7 @@ const MainPage = () => {
 const styles = {
   container: {
     minHeight: "100vh",
-    backgroundColor: "#fffaf0",
+    background: "linear-gradient(135deg, #fffaf0, #ffe6cc)",
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
@@ -58,6 +98,9 @@ const styles = {
     fontFamily: "'Arial', sans-serif",
     boxSizing: "border-box",
     width: "100%",
+    position: "relative",
+    overflow: "hidden",
+    transition: "background 1s ease",
   },
   header: {
     position: "fixed",
@@ -70,7 +113,7 @@ const styles = {
     backgroundColor: "#ffedd5",
     padding: "15px 20px",
     borderBottom: "2px solid #ff7300",
-    boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
+    boxShadow: "0 2px 8px rgba(0, 0, 0, 0.15)",
     width: "100%",
     zIndex: 1000,
   },
@@ -84,6 +127,7 @@ const styles = {
     whiteSpace: "nowrap",
     overflow: "hidden",
     textOverflow: "ellipsis",
+    textShadow: "1px 1px 3px rgba(255, 115, 0, 0.3)",
   },
   backButton: {
     padding: "10px 15px",
@@ -94,7 +138,8 @@ const styles = {
     fontSize: "clamp(14px, 3vw, 16px)",
     fontWeight: "bold",
     cursor: "pointer",
-    transition: "background-color 0.3s, transform 0.1s",
+    transition: "background-color 0.3s, transform 0.3s, box-shadow 0.3s",
+    boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)",
     marginLeft: "10px",
   },
   main: {
@@ -103,13 +148,14 @@ const styles = {
     alignItems: "center",
     justifyContent: "center",
     width: "100%",
-    marginTop: "60px", // Adjusted for fixed header
+    marginTop: "60px",
     padding: "20px 0",
+    position: "relative",
   },
   card: {
     backgroundColor: "#ffffff",
     borderRadius: "15px",
-    boxShadow: "0 6px 12px rgba(0, 0, 0, 0.1)",
+    boxShadow: "0 6px 12px rgba(0, 0, 0, 0.1), 0 0 20px rgba(255, 115, 0, 0.2)",
     width: "100%",
     maxWidth: "450px",
     display: "flex",
@@ -117,6 +163,7 @@ const styles = {
     alignItems: "center",
     justifyContent: "center",
     padding: "clamp(20px, 5vw, 40px)",
+    transition: "transform 0.5s ease, box-shadow 0.3s ease",
   },
   cardContent: {
     display: "flex",
@@ -129,6 +176,7 @@ const styles = {
     height: "auto",
     marginBottom: "clamp(15px, 4vw, 30px)",
     display: "block",
+    transition: "transform 0.3s ease",
   },
   buttonWrapper: {
     display: "flex",
@@ -146,8 +194,14 @@ const styles = {
     fontSize: "clamp(14px, 3vw, 16px)",
     fontWeight: "bold",
     cursor: "pointer",
-    transition: "background-color 0.3s, transform 0.1s",
+    transition: "background-color 0.3s, transform 0.3s, box-shadow 0.3s",
     width: "100%",
+    boxShadow: "0 4px 10px rgba(255, 115, 0, 0.4)",
+  },
+  buttonActive: {
+    transform: "scale(0.95) translateY(2px)",
+    boxShadow: "0 2px 6px rgba(255, 69, 0, 0.5)",
+    backgroundColor: "#ff4500",
   },
   footer: {
     padding: "15px",
@@ -155,68 +209,33 @@ const styles = {
     color: "#666",
     fontSize: "clamp(12px, 2vw, 14px)",
     width: "100%",
+    textShadow: "0 1px 2px rgba(0, 0, 0, 0.1)",
   },
 };
 
-// Hover and focus effects
-styles.button["&:hover"] = { backgroundColor: "#e06600", transform: "scale(1.02)" };
-styles.button["&:active"] = { transform: "scale(0.98)" };
-styles.backButton["&:hover"] = { backgroundColor: "#5a6268", transform: "scale(1.02)" };
-styles.backButton["&:active"] = { transform: "scale(0.98)" };
-
-// Media queries for responsiveness
-const mediaQueries = `
-  @media (max-width: 768px) {
-    ${styles.header} {
-      padding: 10px 15px;
-    }
-    ${styles.headerTitle} {
-      font-size: clamp(16px, 4vw, 20px);
-    }
-    ${styles.backButton} {
-      padding: 8px 12px;
-      font-size: clamp(12px, 3vw, 14px);
-    }
-    ${styles.card} {
-      padding: clamp(15px, 4vw, 20px);
-    }
-    ${styles.cardLogo} {
-      margin-bottom: clamp(10px, 3vw, 15px);
-    }
-    ${styles.button} {
-      padding: clamp(8px, 2vw, 10px);
-      font-size: clamp(12px, 3vw, 14px);
-    }
-    ${styles.footer} {
-      padding: 10px;
-      font-size: clamp(10px, 2vw, 12px);
-    }
-  }
-
-  @media (max-width: 480px) {
-    ${styles.header} {
-      flex-direction: column;
-      gap: 10px;
-    }
-    ${styles.headerTitle} {
-      font-size: clamp(14px, 4vw, 18px);
-    }
-    ${styles.backButton} {
-      width: 100%;
-      margin-left: 0;
-    }
-    ${styles.card} {
-      max-width: 90%;
-    }
-    ${styles.buttonWrapper} {
-      max-width: 100%;
-    }
-  }
-`;
-
-// Inject media queries into the document
-const styleSheet = document.createElement("style");
-styleSheet.textContent = mediaQueries;
-document.head.appendChild(styleSheet);
+// Hover and active effects
+styles.button["&:hover"] = {
+  backgroundColor: "#007bff", // Blue on hover for main buttons
+  transform: "scale(1.05)",
+  boxShadow: "0 6px 15px rgba(0, 123, 255, 0.6)", // Blue shadow
+};
+styles.button["&:active"] = styles.buttonActive;
+styles.backButton["&:hover"] = {
+  backgroundColor: "#007bff", // Blue on hover for Back button
+  transform: "scale(1.05)",
+  boxShadow: "0 6px 12px rgba(0, 123, 255, 0.6)", // Blue shadow
+};
+styles.backButton["&:active"] = {
+  transform: "scale(0.95) translateY(2px)",
+  boxShadow: "0 2px 6px rgba(73, 80, 87, 0.5)",
+  backgroundColor: "#343a40", // Keep dark gray on touch
+};
+styles.card["&:hover"] = {
+  transform: "translateY(-5px)",
+  boxShadow: "0 10px 20px rgba(0, 0, 0, 0.15), 0 0 30px rgba(255, 115, 0, 0.3)",
+};
+styles.cardLogo["&:hover"] = {
+  transform: "scale(1.1)",
+};
 
 export default MainPage;

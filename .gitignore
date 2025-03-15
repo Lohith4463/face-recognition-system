@@ -1,15 +1,12 @@
-cat > .gitignore << EOL
-# Virtual environments
-backend/.venv/
-venv/
-env/
-ENV/
-
-# Large model files
-backend/shape_predictor_68_face_landmarks.dat
-
-# Python cache
-__pycache__/
-*.py[cod]
-*$py.class
-EOL
+echo # Node.js dependencies > .gitignore
+echo frontend/node_modules/ >> .gitignore
+echo frontend/build/ >> .gitignore
+echo frontend/.env >> .gitignore
+echo # Python virtual environment >> .gitignore
+echo backend/venv/ >> .gitignore
+echo backend/__pycache__/ >> .gitignore
+echo backend/*.pyc >> .gitignore
+echo backend/.env >> .gitignore
+echo # IDE files >> .gitignore
+echo .vscode/ >> .gitignore
+echo .idea/ >> .gitignore

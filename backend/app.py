@@ -675,6 +675,41 @@ def get_attendance_records():
         traceback.print_exc()
         return jsonify({"success": False, "error": str(e)}), 500
 
+@app.route('/api/employee-history', methods=['GET'])
+def get_employee_history():
+    """Retrieve an employee's attendance history."""
+    if attendance_collection is None:
+        return jsonify({"success": False, "error": "Database connection not established"}), 500
+
+    try:
+        employeeID = request.args.get('employeeID')
+        if not employeeID:
+            return jsonify({"success": False, "error": "Missing employeeID"}), 400
+
+        # Check if employee exists
+        employee = employees_collection.find_one({"employee_id": employeeID})
+        if not employee:
+            return jsonify({"success": False, "error": "Employee not found"}), 404
+
+        # Fetch all attendance records for the employee
+        records = attendance_collection.find({"employee_id": employeeID}).sort("date", -1)
+        history = [
+            {
+                "date": record["date"],
+                "status": record.get("status", "present"),
+                "inTime": record.get("in_time", record.get("time", "N/A")),  # Fallback to 'time' if 'in_time' missing
+                "lateTime": record.get("late_time", None)
+            }
+            for record in records
+        ]
+
+        print(f"Fetched {len(history)} history records for employeeID={employeeID}")
+        return jsonify({"success": True, "history": history}), 200
+    except Exception as e:
+        print(f"Error fetching employee history: {e}")
+        traceback.print_exc()
+        return jsonify({"success": False, "error": str(e)}), 500
+
 @app.route('/api/employees', methods=['GET'])
 def get_employees():
     """Fetch all employees with attendance status, handling legacy 'time' field."""

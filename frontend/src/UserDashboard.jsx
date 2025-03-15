@@ -6,7 +6,6 @@ const UserDashboard = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [selectedDate, setSelectedDate] = useState('');
-  const [selectedMonth, setSelectedMonth] = useState('');
   const navigate = useNavigate();
   const location = useLocation();
   const { employeeName = 'Unknown', employeeID = '' } = location.state || {};
@@ -23,7 +22,6 @@ const UserDashboard = () => {
       try {
         let url = `http://localhost:5000/api/attendance_records?employeeID=${employeeID}`;
         if (selectedDate) url += `&date=${selectedDate}`;
-        else if (selectedMonth) url += `&month=${selectedMonth}`;
 
         const response = await fetch(url, {
           method: 'GET',
@@ -47,7 +45,7 @@ const UserDashboard = () => {
     };
 
     fetchAttendance();
-  }, [employeeID, navigate, selectedDate, selectedMonth]);
+  }, [employeeID, navigate, selectedDate]);
 
   const handleLogout = () => {
     console.log('Logging out, clearing state, navigating to /login');
@@ -55,19 +53,18 @@ const UserDashboard = () => {
     navigate('/login', { replace: true });
   };
 
-  // Calculate Heatmap and Streaks
   const getHeatmapData = () => {
     const today = new Date();
-    const year = today.getFullYear();
-    const month = selectedMonth ? new Date(selectedMonth).getMonth() : today.getMonth();
+    const year = selectedDate ? new Date(selectedDate).getFullYear() : today.getFullYear();
+    const month = selectedDate ? new Date(selectedDate).getMonth() : today.getMonth();
     const daysInMonth = new Date(year, month + 1, 0).getDate();
     const heatmap = Array(daysInMonth).fill(0);
 
     attendanceRecords.forEach((record) => {
       const recordDate = new Date(record.date);
       if (recordDate.getMonth() === month && recordDate.getFullYear() === year && record.status === 'present') {
-        const day = recordDate.getDate() - 1; // 0-based index
-        heatmap[day] = 1; // 1 for present
+        const day = recordDate.getDate() - 1;
+        heatmap[day] = 1;
       }
     });
 
@@ -119,9 +116,9 @@ const UserDashboard = () => {
     container: {
       minHeight: '100vh',
       backgroundColor: '#f5f5f5',
-      padding: 'clamp(10px, 2vw, 20px)', // Responsive padding
+      padding: 'clamp(10px, 2vw, 20px)',
       fontFamily: "'Segoe UI', Arial, sans-serif",
-      maxWidth: 'clamp(300px, 90%, 1200px)', // Responsive max width
+      maxWidth: 'clamp(300px, 90%, 1200px)',
       margin: '0 auto',
       boxSizing: 'border-box',
       width: '100%',
@@ -131,75 +128,75 @@ const UserDashboard = () => {
       alignItems: 'center',
       justifyContent: 'space-between',
       backgroundColor: '#ff7300',
-      padding: 'clamp(10px, 2vw, 15px) clamp(15px, 3vw, 30px)', // Responsive padding
-      borderRadius: 'clamp(8px, 2vw, 12px)', // Responsive border radius
+      padding: 'clamp(10px, 2vw, 15px) clamp(15px, 3vw, 30px)',
+      borderRadius: 'clamp(8px, 2vw, 12px)',
       boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
       marginBottom: 'clamp(10px, 2vw, 20px)',
     },
-    logo: { maxWidth: 'clamp(60px, 5vw, 80px)', height: 'auto' }, // Responsive logo size
+    logo: { maxWidth: 'clamp(60px, 5vw, 80px)', height: 'auto' },
     title: {
       color: '#ffffff',
-      fontSize: 'clamp(18px, 4vw, 28px)', // Responsive font size
+      fontSize: 'clamp(18px, 4vw, 28px)',
       fontWeight: '600',
       margin: 0,
     },
     logoutButton: {
-      padding: 'clamp(8px, 1.5vw, 10px) clamp(15px, 2vw, 20px)', // Responsive padding
+      padding: 'clamp(8px, 1.5vw, 10px) clamp(15px, 2vw, 20px)',
       border: 'none',
-      borderRadius: 'clamp(6px, 1.5vw, 8px)', // Responsive border radius
+      borderRadius: 'clamp(6px, 1.5vw, 8px)',
       backgroundColor: '#d9534f',
       color: '#ffffff',
-      fontSize: 'clamp(12px, 2vw, 16px)', // Responsive font size
+      fontSize: 'clamp(12px, 2vw, 16px)',
       fontWeight: '600',
       cursor: 'pointer',
       transition: 'background-color 0.3s',
     },
     infoCard: {
       backgroundColor: '#ffffff',
-      padding: 'clamp(15px, 2vw, 20px)', // Responsive padding
-      borderRadius: 'clamp(8px, 2vw, 12px)', // Responsive border radius
+      padding: 'clamp(15px, 2vw, 20px)',
+      borderRadius: 'clamp(8px, 2vw, 12px)',
       boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
       margin: 'clamp(10px, 2vw, 20px) 0',
       textAlign: 'center',
     },
     infoTitle: {
       color: '#ff7300',
-      fontSize: 'clamp(16px, 2.5vw, 20px)', // Responsive font size
+      fontSize: 'clamp(16px, 2.5vw, 20px)',
       fontWeight: '600',
-      marginBottom: 'clamp(5px, 1vw, 10px)', // Responsive margin
+      marginBottom: 'clamp(5px, 1vw, 10px)',
     },
     infoText: {
       color: '#333',
-      fontSize: 'clamp(14px, 2vw, 16px)', // Responsive font size
-      margin: 'clamp(3px, 0.5vw, 5px) 0', // Responsive margin
+      fontSize: 'clamp(14px, 2vw, 16px)',
+      margin: 'clamp(3px, 0.5vw, 5px) 0',
     },
     filterContainer: {
       backgroundColor: '#ffffff',
-      padding: 'clamp(10px, 2vw, 15px)', // Responsive padding
-      borderRadius: 'clamp(8px, 2vw, 12px)', // Responsive border radius
+      padding: 'clamp(10px, 2vw, 15px)',
+      borderRadius: 'clamp(8px, 2vw, 12px)',
       boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
       margin: 'clamp(10px, 2vw, 20px) 0',
       display: 'flex',
       alignItems: 'center',
-      gap: 'clamp(10px, 2vw, 20px)', // Responsive gap
+      gap: 'clamp(10px, 2vw, 20px)',
       flexWrap: 'wrap',
     },
     filterLabel: {
       color: '#ff7300',
-      fontSize: 'clamp(14px, 2vw, 16px)', // Responsive font size
+      fontSize: 'clamp(14px, 2vw, 16px)',
       fontWeight: '600',
     },
     filterInput: {
-      padding: 'clamp(6px, 1.5vw, 8px)', // Responsive padding
-      borderRadius: 'clamp(6px, 1.5vw, 8px)', // Responsive border radius
+      padding: 'clamp(6px, 1.5vw, 8px)',
+      borderRadius: 'clamp(6px, 1.5vw, 8px)',
       border: '1px solid #ddd',
-      fontSize: 'clamp(12px, 2vw, 16px)', // Responsive font size
-      width: 'clamp(150px, 25vw, 180px)', // Responsive width
+      fontSize: 'clamp(12px, 2vw, 16px)',
+      width: 'clamp(150px, 25vw, 180px)',
     },
     tableContainer: {
       backgroundColor: '#ffffff',
-      padding: 'clamp(15px, 2vw, 20px)', // Responsive padding
-      borderRadius: 'clamp(8px, 2vw, 12px)', // Responsive border radius
+      padding: 'clamp(15px, 2vw, 20px)',
+      borderRadius: 'clamp(8px, 2vw, 12px)',
       boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
       margin: 'clamp(10px, 2vw, 20px) 0',
       overflowX: 'auto',
@@ -207,48 +204,48 @@ const UserDashboard = () => {
     statsWrapper: {
       display: 'flex',
       justifyContent: 'space-between',
-      gap: 'clamp(10px, 2vw, 20px)', // Responsive gap
+      gap: 'clamp(10px, 2vw, 20px)',
       margin: 'clamp(10px, 2vw, 20px) 0',
       flexWrap: 'wrap',
     },
     heatmapContainer: {
       backgroundColor: '#ffffff',
-      padding: 'clamp(10px, 2vw, 15px)', // Responsive padding
-      borderRadius: 'clamp(8px, 2vw, 12px)', // Responsive border radius
+      padding: 'clamp(10px, 2vw, 15px)',
+      borderRadius: 'clamp(8px, 2vw, 12px)',
       boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
       flex: '1',
-      minWidth: 'clamp(250px, 40vw, 300px)', // Responsive min width
+      minWidth: 'clamp(250px, 40vw, 300px)',
     },
     streaksContainer: {
       backgroundColor: '#ffffff',
-      padding: 'clamp(10px, 2vw, 15px)', // Responsive padding
-      borderRadius: 'clamp(8px, 2vw, 12px)', // Responsive border radius
+      padding: 'clamp(10px, 2vw, 15px)',
+      borderRadius: 'clamp(8px, 2vw, 12px)',
       boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
       flex: '1',
-      minWidth: 'clamp(250px, 40vw, 300px)', // Responsive min width
+      minWidth: 'clamp(250px, 40vw, 300px)',
       textAlign: 'center',
     },
     sectionTitle: {
       color: '#ff7300',
-      fontSize: 'clamp(14px, 2.5vw, 18px)', // Responsive font size
+      fontSize: 'clamp(14px, 2.5vw, 18px)',
       fontWeight: '600',
-      marginBottom: 'clamp(10px, 2vw, 15px)', // Responsive margin
+      marginBottom: 'clamp(10px, 2vw, 15px)',
     },
     table: { width: '100%', borderCollapse: 'collapse' },
     th: {
       backgroundColor: '#ff7300',
       color: '#ffffff',
-      padding: 'clamp(8px, 1.5vw, 12px)', // Responsive padding
+      padding: 'clamp(8px, 1.5vw, 12px)',
       textAlign: 'left',
       fontWeight: '600',
-      fontSize: 'clamp(12px, 2vw, 16px)', // Responsive font size
+      fontSize: 'clamp(12px, 2vw, 16px)',
       borderBottom: '2px solid #e65c00',
     },
     td: {
-      padding: 'clamp(8px, 1.5vw, 12px)', // Responsive padding
+      padding: 'clamp(8px, 1.5vw, 12px)',
       borderBottom: '1px solid #ddd',
       color: '#333',
-      fontSize: 'clamp(12px, 2vw, 15px)', // Responsive font size
+      fontSize: 'clamp(12px, 2vw, 15px)',
     },
     tr: { transition: 'background-color 0.3s' },
     error: { color: '#d9534f', fontSize: 'clamp(14px, 2vw, 16px)', textAlign: 'center', padding: 'clamp(8px, 1.5vw, 10px)' },
@@ -256,43 +253,43 @@ const UserDashboard = () => {
     noData: { color: '#d9534f', fontSize: 'clamp(14px, 2vw, 16px)', textAlign: 'center', padding: 'clamp(8px, 1.5vw, 10px)' },
     heatmapGrid: {
       display: 'grid',
-      gridTemplateColumns: 'repeat(7, 1fr)', // 7 days per week
-      gap: 'clamp(2px, 0.5vw, 3px)', // Responsive gap
-      maxWidth: 'clamp(200px, 40vw, 280px)', // Responsive width
+      gridTemplateColumns: 'repeat(7, 1fr)',
+      gap: 'clamp(2px, 0.5vw, 3px)',
+      maxWidth: 'clamp(200px, 40vw, 280px)',
       margin: '0 auto',
     },
     heatmapDay: {
-      width: 'clamp(15px, 3vw, 20px)', // Responsive size
-      height: 'clamp(15px, 3vw, 20px)', // Responsive size
-      borderRadius: 'clamp(3px, 0.8vw, 4px)', // Responsive border radius
+      width: 'clamp(15px, 3vw, 20px)',
+      height: 'clamp(15px, 3vw, 20px)',
+      borderRadius: 'clamp(3px, 0.8vw, 4px)',
       cursor: 'pointer',
       border: '1px solid #e9ecef',
       transition: 'all 0.2s ease',
     },
     streakItem: {
-      margin: 'clamp(8px, 1.5vw, 10px) 0', // Responsive margin
+      margin: 'clamp(8px, 1.5vw, 10px) 0',
     },
     streakLabel: {
       color: '#555',
-      fontSize: 'clamp(12px, 2vw, 14px)', // Responsive font size
+      fontSize: 'clamp(12px, 2vw, 14px)',
       fontWeight: '500',
     },
     streakValue: {
-      fontSize: 'clamp(16px, 2.5vw, 20px)', // Responsive font size
+      fontSize: 'clamp(16px, 2.5vw, 20px)',
       fontWeight: '700',
       color: '#28a745',
       backgroundColor: '#e9f7ef',
-      padding: 'clamp(4px, 1vw, 5px) clamp(8px, 1.5vw, 10px)', // Responsive padding
-      borderRadius: 'clamp(4px, 1vw, 6px)', // Responsive border radius
+      padding: 'clamp(4px, 1vw, 5px) clamp(8px, 1.5vw, 10px)',
+      borderRadius: 'clamp(4px, 1vw, 6px)',
       display: 'inline-block',
-      marginTop: 'clamp(4px, 0.8vw, 5px)', // Responsive margin
+      marginTop: 'clamp(4px, 0.8vw, 5px)',
     },
     footer: {
-      marginTop: 'clamp(20px, 3vw, 30px)', // Responsive margin
+      marginTop: 'clamp(20px, 3vw, 30px)',
       textAlign: 'center',
       color: '#666',
-      fontSize: 'clamp(12px, 2vw, 14px)', // Responsive font size
-      padding: 'clamp(8px, 1.5vw, 10px)', // Responsive padding
+      fontSize: 'clamp(12px, 2vw, 14px)',
+      padding: 'clamp(8px, 1.5vw, 10px)',
     },
   };
 
@@ -324,30 +321,19 @@ const UserDashboard = () => {
         <input
           type="date"
           value={selectedDate}
-          onChange={(e) => {
-            setSelectedDate(e.target.value);
-            setSelectedMonth('');
-          }}
-          style={styles.filterInput}
-        />
-        <label style={styles.filterLabel}>Filter by Month:</label>
-        <input
-          type="month"
-          value={selectedMonth}
-          onChange={(e) => {
-            setSelectedMonth(e.target.value);
-            setSelectedDate('');
-          }}
+          onChange={(e) => setSelectedDate(e.target.value)}
           style={styles.filterInput}
         />
       </div>
 
-      {/* Side-by-Side Heatmap and Streaks */}
       <div style={styles.statsWrapper}>
-        {/* Heatmap */}
         <div style={styles.heatmapContainer}>
           <h2 style={styles.sectionTitle}>
-            Heatmap ({selectedMonth || new Date().toLocaleString('default', { month: 'long', year: 'numeric' })})
+            Heatmap (
+            {selectedDate
+              ? new Date(selectedDate).toLocaleString('default', { month: 'long', year: 'numeric' })
+              : new Date().toLocaleString('default', { month: 'long', year: 'numeric' })}
+            )
           </h2>
           {loading ? (
             <p style={styles.loading}>Loading...</p>
@@ -372,7 +358,6 @@ const UserDashboard = () => {
           )}
         </div>
 
-        {/* Streaks */}
         <div style={styles.streaksContainer}>
           <h2 style={styles.sectionTitle}>Streaks</h2>
           {loading ? (
@@ -392,7 +377,6 @@ const UserDashboard = () => {
         </div>
       </div>
 
-      {/* Attendance Table */}
       <div style={styles.tableContainer}>
         <h2 style={styles.sectionTitle}>Your Attendance History</h2>
         {loading ? (

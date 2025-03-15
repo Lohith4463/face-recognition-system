@@ -11,18 +11,20 @@ const AdminRegistration = () => {
   const [password, setPassword] = useState('');
   const [cameraActive, setCameraActive] = useState(false);
   const [capturedImage, setCapturedImage] = useState(null);
+  const [formVisible, setFormVisible] = useState(false); // For form animation
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
   const navigate = useNavigate();
 
-  // Start camera on mount when cameraActive changes
+  // Trigger form animation and camera handling
   useEffect(() => {
+    setFormVisible(true);
     if (cameraActive && videoRef.current) {
       startCamera();
     } else if (!cameraActive) {
-      stopCamera(); // Ensure camera stops when deactivated
+      stopCamera();
     }
-    return () => stopCamera(); // Cleanup on unmount
+    return () => stopCamera();
   }, [cameraActive]);
 
   const startCamera = async () => {
@@ -33,8 +35,8 @@ const AdminRegistration = () => {
       }
     } catch (err) {
       console.error('Error accessing camera:', err);
-      alert('Failed to access camera. Please allow camera permissions or check your device.');
-      setCameraActive(false); // Reset camera state on error
+      alert('Failed to access camera. Please allow camera permissions.');
+      setCameraActive(false);
     }
   };
 
@@ -95,7 +97,7 @@ const AdminRegistration = () => {
       }
     } catch (err) {
       console.error('Error registering employee:', err);
-      alert(`Failed to register employee: ${err.message || 'Network or server issue'}`);
+      alert(`Failed to register employee: ${err.message || 'Network issue'}`);
     }
   };
 
@@ -121,13 +123,11 @@ const AdminRegistration = () => {
       }
     } catch (err) {
       console.error('Error verifying OTP:', err);
-      alert(`Failed to verify OTP: ${err.message || 'Network or server issue'}`);
+      alert(`Failed to verify OTP: ${err.message || 'Network issue'}`);
     }
   };
 
-  const handleBack = () => {
-    navigate('/admin'); // Redirect to admin page
-  };
+  const handleBack = () => navigate('/admin');
 
   const styles = {
     container: {
@@ -141,6 +141,7 @@ const AdminRegistration = () => {
       fontFamily: "'Arial', sans-serif",
       boxSizing: 'border-box',
       width: '100%',
+      transition: 'background-color 0.5s ease',
     },
     header: {
       position: 'fixed',
@@ -153,12 +154,13 @@ const AdminRegistration = () => {
       backgroundColor: '#ffedd5',
       padding: 'clamp(10px, 2vw, 15px) clamp(15px, 3vw, 30px)',
       borderBottom: '2px solid #ff7300',
-      boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
+      boxShadow: '0 4px 12px rgba(255, 115, 0, 0.3)', // Orange glow
       zIndex: 1000,
     },
     logo: {
       maxWidth: 'clamp(50px, 5vw, 60px)',
       height: 'auto',
+      transition: 'transform 0.3s ease',
     },
     headerTitle: {
       color: '#ff7300',
@@ -170,6 +172,8 @@ const AdminRegistration = () => {
       whiteSpace: 'nowrap',
       overflow: 'hidden',
       textOverflow: 'ellipsis',
+      textShadow: '1px 1px 3px rgba(255, 115, 0, 0.4)',
+      transition: 'transform 0.3s ease',
     },
     backButton: {
       padding: 'clamp(8px, 1.5vw, 10px) clamp(15px, 2vw, 20px)',
@@ -180,25 +184,30 @@ const AdminRegistration = () => {
       fontSize: 'clamp(12px, 2vw, 16px)',
       fontWeight: 'bold',
       cursor: 'pointer',
-      transition: 'background-color 0.3s, transform 0.1s',
+      transition: 'background-color 0.3s, transform 0.3s, box-shadow 0.3s',
+      boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)',
     },
     form: {
       backgroundColor: '#ffffff',
       padding: 'clamp(15px, 3vw, 30px)',
       borderRadius: 'clamp(8px, 2vw, 12px)',
-      boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+      boxShadow: '0 6px 15px rgba(255, 115, 0, 0.3)', // Orange glow
       width: '100%',
       maxWidth: 'clamp(300px, 80%, 400px)',
       display: 'flex',
       flexDirection: 'column',
       gap: 'clamp(10px, 2vw, 15px)',
-      marginTop: 'clamp(60px, 10vh, 80px)', // Space for fixed header
+      marginTop: 'clamp(60px, 10vh, 80px)',
+      transform: formVisible ? 'translateY(0) rotate(0deg)' : 'translateY(30px) rotate(2deg)',
+      opacity: formVisible ? 1 : 0,
+      transition: 'transform 0.5s ease-out, opacity 0.5s ease-out, box-shadow 0.3s ease',
     },
     label: {
       color: '#ff7300',
       fontSize: 'clamp(14px, 2vw, 16px)',
       fontWeight: 'bold',
       marginBottom: 'clamp(3px, 1vw, 5px)',
+      transition: 'transform 0.3s ease, color 0.3s ease',
     },
     input: {
       width: '100%',
@@ -206,8 +215,9 @@ const AdminRegistration = () => {
       borderRadius: 'clamp(6px, 1.5vw, 8px)',
       border: '1px solid #ddd',
       fontSize: 'clamp(14px, 2vw, 16px)',
-      transition: 'border-color 0.3s, box-shadow 0.3s',
+      transition: 'border-color 0.3s, box-shadow 0.3s, transform 0.3s',
       boxSizing: 'border-box',
+      backgroundColor: '#fffaf0', // Light orange tint
     },
     button: {
       padding: 'clamp(10px, 2vw, 12px)',
@@ -218,8 +228,9 @@ const AdminRegistration = () => {
       fontSize: 'clamp(14px, 2vw, 16px)',
       fontWeight: 'bold',
       cursor: 'pointer',
-      transition: 'background-color 0.3s, transform 0.1s',
-      width: '100%', // Full width for touch-friendliness
+      transition: 'background-color 0.3s, transform 0.3s, box-shadow 0.3s',
+      width: '100%',
+      boxShadow: '0 4px 10px rgba(255, 115, 0, 0.4)',
     },
     cameraContainer: {
       display: 'flex',
@@ -231,13 +242,17 @@ const AdminRegistration = () => {
       width: '100%',
       maxWidth: 'clamp(250px, 60vw, 300px)',
       borderRadius: 'clamp(6px, 1.5vw, 8px)',
-      border: '1px solid #ddd',
+      border: '2px solid #ff7300', // Orange frame
+      boxShadow: '0 4px 12px rgba(255, 115, 0, 0.3)',
+      transition: 'transform 0.3s ease, box-shadow 0.3s ease',
     },
     capturedImage: {
       width: '100%',
       maxWidth: 'clamp(250px, 60vw, 300px)',
       borderRadius: 'clamp(6px, 1.5vw, 8px)',
-      border: '1px solid #ddd',
+      border: '2px solid #ff7300',
+      boxShadow: '0 4px 12px rgba(255, 115, 0, 0.3)',
+      transition: 'transform 0.3s ease, box-shadow 0.3s ease',
     },
     footer: {
       marginTop: 'auto',
@@ -246,65 +261,65 @@ const AdminRegistration = () => {
       color: '#666',
       fontSize: 'clamp(12px, 2vw, 14px)',
       width: '100%',
+      transition: 'color 0.3s ease',
     },
   };
 
-  // Media queries for responsiveness
-  const mediaQueries = `
-    @media (max-width: 768px) {
-      ${styles.header} {
-        padding: clamp(8px, 2vw, 10px) clamp(10px, 2vw, 15px);
-      }
-      ${styles.headerTitle} {
-        font-size: clamp(16px, 4vw, 20px);
-      }
-      ${styles.backButton} {
-        padding: clamp(6px, 1.2vw, 8px) clamp(12px, 1.8vw, 15px);
-        font-size: clamp(12px, 2vw, 14px);
-      }
-      ${styles.form} {
-        padding: clamp(10px, 2vw, 15px);
-      }
-      ${styles.video}, ${styles.capturedImage} {
-        max-width: clamp(200px, 50vw, 250px);
-      }
-    }
-
-    @media (max-width: 480px) {
-      ${styles.header} {
-        flex-direction: column;
-        gap: clamp(5px, 1vw, 10px);
-      }
-      ${styles.headerTitle} {
-        font-size: clamp(14px, 4vw, 18px);
-      }
-      ${styles.backButton} {
-        width: 100%;
-        margin: 0;
-      }
-      ${styles.form} {
-        max-width: 90%;
-      }
-      ${styles.video}, ${styles.capturedImage} {
-        max-width: clamp(150px, 40vw, 200px);
-      }
-    }
-  `;
-
-  // Inject media queries into the document
-  useEffect(() => {
-    const styleSheet = document.createElement('style');
-    styleSheet.textContent = mediaQueries;
-    document.head.appendChild(styleSheet);
-    return () => document.head.removeChild(styleSheet); // Cleanup on unmount
-  }, [mediaQueries]);
-
   // Hover and focus effects
-  styles.input[':focus'] = { borderColor: '#ff7300', boxShadow: '0 0 5px rgba(255, 115, 0, 0.3)' };
-  styles.button[':hover'] = { backgroundColor: '#e06600', transform: 'scale(1.02)' };
-  styles.button[':active'] = { transform: 'scale(0.98)' };
-  styles.backButton[':hover'] = { backgroundColor: '#5a6268', transform: 'scale(1.02)' };
-  styles.backButton[':active'] = { transform: 'scale(0.98)' };
+  styles.input[":focus"] = {
+    borderColor: '#ff7300',
+    boxShadow: '0 0 8px rgba(255, 115, 0, 0.5)',
+    transform: 'scale(1.02)', // Subtle lift
+    outline: 'none',
+  };
+  styles.input[":hover"] = {
+    transform: 'scale(1.02)',
+    boxShadow: '0 0 5px rgba(255, 115, 0, 0.4)',
+  };
+  styles.button[":hover"] = {
+    backgroundColor: '#e06600', // Slightly darker orange
+    transform: 'scale(1.05) rotate(3deg)', // Wobble effect
+    boxShadow: '0 6px 15px rgba(255, 115, 0, 0.6)', // Glowing orange shadow
+  };
+  styles.button[":active"] = {
+    transform: 'scale(0.95) rotate(0deg)',
+    backgroundColor: '#cc5c00', // Darker orange on press
+    boxShadow: '0 2px 6px rgba(255, 115, 0, 0.5)',
+  };
+  styles.backButton[":hover"] = {
+    backgroundColor: '#5a6268',
+    transform: 'scale(1.05) rotate(-2deg)', // Opposite wobble
+    boxShadow: '0 6px 12px rgba(90, 98, 104, 0.5)',
+  };
+  styles.backButton[":active"] = {
+    transform: 'scale(0.95) rotate(0deg)',
+    backgroundColor: '#495057',
+    boxShadow: '0 2px 6px rgba(0, 0, 0, 0.3)',
+  };
+  styles.logo[":hover"] = {
+    transform: 'scale(1.1) rotate(10deg)', // Playful spin
+  };
+  styles.headerTitle[":hover"] = {
+    transform: 'scale(1.05)', // Slight pop
+  };
+  styles.label[":hover"] = {
+    transform: 'translateX(5px)', // Slide effect
+    color: '#e06600', // Darker orange
+  };
+  styles.video[":hover"] = {
+    transform: 'scale(1.03)',
+    boxShadow: '0 6px 15px rgba(255, 115, 0, 0.5)', // Enhanced glow
+  };
+  styles.capturedImage[":hover"] = {
+    transform: 'scale(1.03) rotate(2deg)', // Wobble on captured image
+    boxShadow: '0 6px 15px rgba(255, 115, 0, 0.5)',
+  };
+  styles.form[":hover"] = {
+    boxShadow: '0 10px 20px rgba(255, 115, 0, 0.5)', // Bigger glow on hover
+  };
+  styles.footer[":hover"] = {
+    color: '#ff7300', // Orange text on hover
+  };
 
   return (
     <div style={styles.container}>
@@ -323,6 +338,7 @@ const AdminRegistration = () => {
             onChange={(e) => setEmployeeID(e.target.value)}
             style={styles.input}
             required
+            placeholder="Enter Employee ID"
           />
           <label style={styles.label}>Email:</label>
           <input
@@ -331,6 +347,7 @@ const AdminRegistration = () => {
             onChange={(e) => setEmail(e.target.value)}
             style={styles.input}
             required
+            placeholder="Enter Email"
           />
           <label style={styles.label}>Name:</label>
           <input
@@ -339,6 +356,7 @@ const AdminRegistration = () => {
             onChange={(e) => setEmployeeName(e.target.value)}
             style={styles.input}
             required
+            placeholder="Enter Name"
           />
           <label style={styles.label}>Department:</label>
           <input
@@ -347,15 +365,20 @@ const AdminRegistration = () => {
             onChange={(e) => setDepartment(e.target.value)}
             style={styles.input}
             required
+            placeholder="Enter Department"
           />
           <label style={styles.label}>Capture Face Image:</label>
           {!capturedImage && !cameraActive && (
-            <button onClick={() => setCameraActive(true)} style={styles.button}>Start Camera</button>
+            <button onClick={() => setCameraActive(true)} style={styles.button}>
+              Start Camera
+            </button>
           )}
           {cameraActive && (
             <div style={styles.cameraContainer}>
               <video ref={videoRef} autoPlay style={styles.video} />
-              <button onClick={captureImage} style={styles.button}>Capture Image</button>
+              <button onClick={captureImage} style={styles.button}>
+                Capture Image
+              </button>
             </div>
           )}
           {capturedImage && (
@@ -373,7 +396,11 @@ const AdminRegistration = () => {
             </div>
           )}
           <canvas ref={canvasRef} style={{ display: 'none' }} />
-          {capturedImage && <button onClick={handleRegister} style={styles.button}>Register</button>}
+          {capturedImage && (
+            <button onClick={handleRegister} style={styles.button}>
+              Register
+            </button>
+          )}
         </div>
       ) : (
         <form onSubmit={handleVerifyOtp} style={styles.form}>
@@ -384,6 +411,7 @@ const AdminRegistration = () => {
             onChange={(e) => setOtp(e.target.value)}
             style={styles.input}
             required
+            placeholder="Enter OTP"
           />
           <label style={styles.label}>Password:</label>
           <input
@@ -392,8 +420,11 @@ const AdminRegistration = () => {
             onChange={(e) => setPassword(e.target.value)}
             style={styles.input}
             required
+            placeholder="Set Password"
           />
-          <button type="submit" style={styles.button}>Verify OTP</button>
+          <button type="submit" style={styles.button}>
+            Verify OTP
+          </button>
         </form>
       )}
 
